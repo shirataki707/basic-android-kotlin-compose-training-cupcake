@@ -16,6 +16,10 @@ Learn
 - Navigation Component
   - NavController
     - 画面遷移を行う
+    - NavHostが完成したら、後は各画面のComposableにnavControllerを渡して画面遷移すればよいが、Composableがnavigationを持つのは微妙。
+      navigationは一元管理すべきだし、画面同士の関心を分離したい。なので、Callbackを使って画面遷移を行う。
+    - navController.navigate()で画面遷移を行う
+    - 戻る操作はnavController.popBackStack()で行う。routeで指定した画面に戻る。また、inclusiveでtrueを指定すると、指定した画面も含めてpopする。
   - NavGraph
     - 画面遷移先の定義を行う
   - NavHost
@@ -33,6 +37,7 @@ Learn
     }
     ```
     - NavHost内のcomposable()はrouteとcontentを持つ。つまり、Composableで作った画面がNavGraph上でどんな名前なのかを定義する。
+  
 
 Pre-requisites
 --------------
