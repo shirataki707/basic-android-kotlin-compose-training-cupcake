@@ -38,6 +38,57 @@ Learn
     ```
     - NavHost内のcomposable()はrouteとcontentを持つ。つまり、Composableで作った画面がNavGraph上でどんな名前なのかを定義する。
   
+- Navigation Test
+  - 初期設定
+    ```
+    class CupcakeScreenNavigationTest {
+      @get:Rule
+      val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+  
+      private lateinit var navController: TestNavHostController
+  
+      @Before
+      fun setupCupcakeNavHost() {
+          composeTestRule.setContent {
+              navController = TestNavHostController(LocalContext.current).apply {
+                  navigatorProvider.addNavigator(ComposeNavigator())
+              }
+              CupcakeApp(navController = navController)
+          }
+      }
+    
+  - 画面遷移が正常にできたかの確認は拡張関数を作ると便利
+    ```
+    fun NavController.assertCurrentRouteName(expectedRouteName: String) {
+      assertEquals(expectedRouteName, currentBackStackEntry?.destination?.route)
+    }
+    
+  - 文字列リソースへのアクセス
+    ```
+    val backText = composeTestRule.activity.getString(R.string.back_button)
+
+  - ノードへのアクセス
+    ```
+    composeTestRule.onNodeWithContentDescription(backText)
+    composeTestRule.onNodeWithStringId(R.string.next)
+    composeTestRule.onNodeWithText(getFormattedDate())
+    
+    fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onNodeWithStringId(
+    　　@StringRes id: Int
+    ): SemanticsNodeInteraction = onNodeWithText(activity.getString(id))
+    
+  - アクセスしたノードへの処理の例
+    ```
+    .performClick()
+    .assertDoesNotExist()
+  - 画面遷移(進む、戻る)はメソッドを定義すると使いまわせて便利
+    ```
+    private fun navigateToFlavorScreen() {
+        composeTestRule.onNodeWithStringId(R.string.one_cupcake).performClick()
+        composeTestRule.onNodeWithStringId(R.string.chocolate).performClick()
+    }
+  
+    
 
 Pre-requisites
 --------------
